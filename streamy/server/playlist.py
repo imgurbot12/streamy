@@ -1,7 +1,7 @@
 """
 Streamy Server `Playlist` API
 """
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from ..utils import BluePrint
 
@@ -10,7 +10,7 @@ __all__ = ['api']
 
 api = BluePrint('/api/v1/playlist/')
 
-PlayList = Dict[str, str]
+PlayList = Dict[str, Any]
 
 #** Routes **#
 

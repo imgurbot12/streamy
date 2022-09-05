@@ -5,14 +5,14 @@ import os
 import json
 import hashlib
 from dbm import gnu as gnudb
-from typing import Dict, List, Optional, Iterator
+from typing import Tuple, Dict, List, Optional, Iterator
 from collections import namedtuple
 from dataclasses import dataclass, field, asdict
 from concurrent.futures import ThreadPoolExecutor
 
 import ffmpeg
 
-from . import TrackInfo, PlayList, Backend
+from . import TrackInfo, PlayList, FileStream, Backend
 
 #** Varaibles **#
 __all__ = ['FileSystemBackend']
@@ -50,6 +50,7 @@ def scan_track(record: Record) -> TrackInfo:
         id=record.id,
         path=record.filepath,
         name=tags.get('title') or record.name,
+        mime=f'audio/{format.get("format_name", "unknown")}',
         length=int(duration),
         album=tags.get('album'),
         artist=tags.get('artist'),
@@ -178,7 +179,17 @@ class FileSystemBackend(Backend):
         if queue:
             print('flushing db')
             self.db.flush()
+    
+    def stream(self, id: str) -> Optional[Tuple[str, FileStream]]:
+        """
+        return filestream for the given track-id
 
+        :param id: track-id being retrievd
+        :return:   filestream if id is valid
+        """
+        info = self.get_track(id)
+        if info is not None:
+            return info.mime, open(info.path, 'rb')
 
     def all_tracks(self, page: int = 1, limit: int = 10) -> List[TrackInfo]:
         """
