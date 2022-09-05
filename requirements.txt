@@ -1,0 +1,5 @@
+uvicorn==0.11.8
+dataclasses==0.7
+fastapi==0.82.0
+ffmpeg-python==0.2.0
+git+https://github.com/imgurbot12/cli>=3.0.0

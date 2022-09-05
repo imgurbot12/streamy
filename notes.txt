@@ -1,0 +1,38 @@
+
+architecture
+-------------
+
+server
+  - hosts access to music
+  - api
+    - track
+      - all
+      - stream /id/
+      - get    /id/
+      - search /name/
+    - playlist
+      - new    /name/
+      - get    /id/
+      - search /name/
+
+remote
+  - streams music using server api
+  - api
+    - remote
+      - action
+        - back             ( start playing previous track )
+        - next             ( start playing next track )
+        - pause            ( pause current track )
+        - shuffle /on|off/ ( get/post/delete to get/update status )
+      - track 
+        - art   ( get track art )
+        - info  ( get track name / artist / etc... )
+        - time  
+          - get           ( get track current / total seconds )
+          - set /seconds/ ( set track current )
+      - queue
+        - get
+        - add  /id/
+        - del  /id/
+        - move /id/pos/
+    - sink ( raw audio playback sink )
