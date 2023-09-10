@@ -6,7 +6,7 @@ import cli
 import uvicorn
 
 from . import Context, webapp
-from .backend import Backend
+from .backend import AudioBackend
 from .backend.filesystem import FileSystemBackend
 
 #** Variables **#
@@ -23,7 +23,7 @@ def apply_kwargs(key: str, query: dict, kwargs: dict):
     if key in kwargs and key not in query:
         query[key] = kwargs[key]
 
-def get_backend(ctx: cli.Context, uri: str, **kwargs) -> Backend:
+def get_backend(ctx: cli.Context, uri: str, **kwargs):
     """
     parse the given db-uri into a valid backend object
 
@@ -40,21 +40,16 @@ def get_backend(ctx: cli.Context, uri: str, **kwargs) -> Backend:
 #** Commands **#
 
 @cli.app()
-async def server(
-    ctx: cli.Context, 
-    *, 
-    uri:    str       = 'file://mcache.db',
-    paths:  List[str] = [f'{HOME}/Music'],
-):
+async def server(ctx: cli.Context):
     """
     spawn and operate a `Streamy` server instance
 
     :param ctx:    cli context object
-    :param uri:    server backend uri 
-    :param paths:  filepaths to load music from (fsdb specific)
     """
     # configure web app context
-    Context.backend = get_backend(ctx, uri, paths=paths)
+    backend = FileSystemBackend('./mcache.db', [f'{HOME}/Music', f'{HOME}/Videos'])
+    Context.audio_backend = backend
+    Context.video_backend = backend
     # run web service
     config = uvicorn.Config(app=webapp)
     server = uvicorn.Server(config=config)

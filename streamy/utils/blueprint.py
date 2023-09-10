@@ -14,6 +14,7 @@ __all__ = ['Method', 'Route', 'BluePrint']
 #** Classes **#
 
 class Method(Enum):
+    HEAD    = 'HEAD'
     GET     = 'GET'
     PUT     = 'PUT'
     POST    = 'POST'
@@ -41,7 +42,18 @@ class BluePrint:
             self.routes.append(Route(func, method, path, args, kwargs))
             return func
         return decorator
+    
+    def head(self, path: str, *args, **kwargs) -> Callable:
+        """
+        add decorated function as HEAD route to blueprint router
 
+        :param path:   path to associated w/ specified route
+        :param args:   positional args to pass to router
+        :param kwargs: keyword arguments to pass to router
+        :return:       decorator function
+        """
+        return self.route(Method.HEAD, path, *args, **kwargs)
+    
     def get(self, path: str, *args, **kwargs) -> Callable:
         """
         add decorated function as GET route to blueprint router
